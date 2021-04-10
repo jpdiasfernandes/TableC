@@ -14,7 +14,12 @@
 #include <stdlib.h> /* malloc */
 #include <string.h>
 
-#include "table_p.h" /* private declarations */
+/* Private declarations */
+#include "generic.h"
+#include "memory.h"
+#include "search.h"
+#include "helpers.h"
+
 
 /**
  * @title: Table
@@ -50,8 +55,11 @@
 ROW row_copy(int fields, ROW row, HEADER header) {
 	int i;
 	ROW r = alloc_row(fields);
-	for (i = 0; i < fields; i++)
+	for (i = 0; i < fields; i++) {
+		alloc_cell_cont(&r[i], header[i].size);
 		cell_generic_insert(&r[i], header[i].type, row[i].cont);
+		r[i].row_ptr = r;
+	}
 	return r;
 }
 /* End of copy */
@@ -143,6 +151,7 @@ int table_append_generic(TABLE *t, void **args) {
 	int i;
 	ROW r = alloc_row(t->fields);
 
+	// Repeated code from row_copy possibly changes might apply
 	for (i = 0; i < t->fields; i++) {
 		// Can't forget to free in delete function
 		alloc_cell_cont(&r[i], t->header[i].size);
@@ -227,6 +236,7 @@ int table_append_row(TABLE *t, ROW row) {
 
 /* String and File functions */
 /* Needs cleaning and critical thinking */
+/* Used only for testing not ready for being used */
 GString *string_line(GString *g, int width) {
 	int i;
 	g_string_append_c(g, '+');
@@ -271,9 +281,6 @@ static gint print_row(gpointer key, gpointer value, gpointer data) {
 	return FALSE;
 }
 char *table_to_file(FILE *fp, TABLE *t) {
-	char buf[4096];
-	int i;
-	gpointer key, value;
 	GString *g = g_string_new("");
 	int width = header_to_string(t, g);
 	int args[2] = {width, t->fields};
