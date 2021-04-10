@@ -70,7 +70,7 @@ void *void_ptr_generic_insert(void *cont, int type, void *arg) {
 	switch (type) {
 		case COL_TYPE_STRING:
 			tmp = (char *)strdup((char *)arg);
-			*(char **)cont = (char *)tmp;
+			*(char **)cont = tmp;
 			break;
 		case COL_TYPE_INT:
 			*(int *)cont = *(int *)arg;
