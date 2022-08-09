@@ -5,13 +5,7 @@
 #include "table_p.h"
 
 /* Func prototypes */
-int alloc_cell_cont(CELL *c, size_t size);
-void free_cell(CELL *c);
-ROW alloc_row(int fields);
-void free_row(ROW row, int fields);
 INFO *alloc_header(int fields);
-void free_header(HEADER h);
 TABLE *alloc_table(int fields);
-void free_table(TABLE *t);
 
 #endif 	//_MEMORY_H_

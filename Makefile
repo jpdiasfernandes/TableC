@@ -1,21 +1,42 @@
 CC      := gcc
-CCFLAGS := -O2 
-LDFLAGS := 
+CCFLAGS := -O2
+DEBUG   := -g -ggdb -DDEBUG
+FLAGS   = -Wall -Wextra
 
-TARGETS := main
-MAINS   := main.o
-OBJ     := table.o main.o helpers.o search.o generic.o memory.o
-DEPS    := table.h helpers.h search.h generic.h memory.h
 
-.PHONY: clean all 
+MAIN        := tablec
+SRC_DIR     := src
+OBJ_DIR     := obj
+BIN_DIR     := bin
+INCLUDE_DIR := includes
+SRC         := $(wildcard $(SRC_DIR)/*.c)
+INCLUDE     := -iquote $(INCLUDE_DIR)
+INCLUDE     := $(INCLUDE) `pkg-config --cflags --libs glib-2.0`
+OBJ         := $(addprefix $(OBJ_DIR)/, $(notdir $(patsubst %.c, %.o, $(SRC))))
 
-all: $(TARGETS)
+
+.DEFAULT_GOAL = build
+.PHONY: clean run build debug struct
+
+vpath %.c $(SRC_DIR)
+
+$(OBJ_DIR)/%.o : %.c
+	$(CC) -c $(INCLUDE) $(FLAGS) $^ -o $@
+
+$(MAIN): $(OBJ)
+	$(CC) $(INCLUDE) $(FLAGS) $^ -o $(BIN_DIR)/$@
+
+build: FLAGS += $(CCFLAGS)
+build: $(MAIN)
+
+struct:
+	mkdir $(OBJ_DIR) $(BIN_DIR)
+
+run: build
+	./$(BIN_DIR)/$(MAIN)
+
+debug: FLAGS += $(DEBUG)
+debug: $(MAIN)
 
 clean:
-	rm -f $(TARGETS) $(OBJ)
-
-%.o : %.c
-	$(CC) -c -DDEBUG -g $^  -o $@ `pkg-config --cflags --libs glib-2.0`
-
-$(TARGETS): $(OBJ)
-	$(CC) $^ -o $@  `pkg-config --cflags --libs glib-2.0`
+	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/*
