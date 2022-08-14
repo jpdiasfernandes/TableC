@@ -18,6 +18,17 @@ INFO *alloc_header(int fields) {
 }
 
 /**
+ * free_header:
+ * @header: the header to be freed
+ *
+ * Frees the header (for organization purposes since this is not as efficient as calling free directly)
+ *
+ */
+void free_header(INFO *header) {
+	free(header);
+}
+
+/**
  * alloc_table:
  * @fields: number of fields the table has
  *
@@ -33,7 +44,28 @@ TABLE *alloc_table(int fields) {
 		return NULL;
 	}
 	t->gtree = calloc(fields, sizeof(GTree *));
+	if (t->gtree == NULL) {
+		perror("Tree array allocation failed.");
+		return NULL;
+	}
 	t->header = alloc_header(fields);
 	return t;
 }
 
+/**
+ * free_table:
+ * @table: the  table to be freed
+ *
+ * Frees the table (for organization purposes since this not as efficient as calling free directly)
+ *
+ * It is supposed to be called only after deallocing every content of every tree.
+ *
+ */
+void free_table(TABLE *table) {
+	//frees gtrees array
+	free(table->gtree);
+	//frees header
+	free_header(table->header);
+	//frees the table
+	free(table);
+}

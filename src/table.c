@@ -85,3 +85,18 @@ TABLE *table_new_generic(int fields, int index, int *types, char **headers) {
 	}
 	return t;
 }
+
+
+/**
+ * table_destroy:
+ * @table: table to be destroied
+ *
+ * Deallocs every alloced memory in the table and destroys every data structure used
+ *
+ */
+void table_destroy(TABLE *table) {
+	//deallocs all cells
+
+	//frees table
+	free_table(table);
+}
