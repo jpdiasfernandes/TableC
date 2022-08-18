@@ -6,7 +6,7 @@
 
 /* Func prototypes */
 INFO *alloc_header(int fields);
-void free_header(INFO *header);
+void free_header(INFO *header, int fields);
 TABLE *alloc_table(int fields);
 void free_table(TABLE *table);
 

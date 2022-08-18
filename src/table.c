@@ -64,11 +64,15 @@ TABLE *table_new_generic(int fields, int index, int *types, char **headers) {
 	//allocs a table with a number of fields + a default field for row number
 	TABLE *t = alloc_table(fields + 1);
 
+	if (t == NULL) {
+		perror("Table allocation failed.");
+		return NULL;
+	}
 	//user fields + row field
 	t->fields = fields + 1;
 
 	//if index is out of bounds the default index will be the row_no collumn
-	if (t->index <= 0 || t->index > fields)
+	if (index <= 0 || index > fields)
 		index = 0;
 
 	t->index = index;
@@ -101,6 +105,10 @@ TABLE *table_new_generic(int fields, int index, int *types, char **headers) {
 void table_destroy(TABLE *table) {
 	//deallocs all cells
 
+	for (int i = 0; i < table->fields; i++) {
+		if (table->gtree[i])
+			g_tree_destroy(table->gtree[i]);
+	}
 	//frees table
 	free_table(table);
 }

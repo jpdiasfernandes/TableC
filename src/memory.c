@@ -12,7 +12,7 @@
  * Returns: the header data structure
 */
 INFO *alloc_header(int fields) {
-	INFO *r = malloc(sizeof(struct info) * fields);
+	INFO *r = malloc(sizeof(INFO) * fields);
 	if (r == NULL) perror("Could not allocate header");
 	return r;
 }
@@ -20,11 +20,14 @@ INFO *alloc_header(int fields) {
 /**
  * free_header:
  * @header: the header to be freed
+ * @fields: the number of fields of the header
  *
- * Frees the header (for organization purposes since this is not as efficient as calling free directly)
+ * Frees the header and all the header allocation done with header_generic_insert
  *
  */
-void free_header(INFO *header) {
+void free_header(INFO *header, int fields) {
+	for (int i = 0; i < fields; i++)
+		free((void *)header[i].field_name);
 	free(header);
 }
 
@@ -65,7 +68,7 @@ void free_table(TABLE *table) {
 	//frees gtrees array
 	free(table->gtree);
 	//frees header
-	free_header(table->header);
+	free_header(table->header, table->fields);
 	//frees the table
 	free(table);
 }
