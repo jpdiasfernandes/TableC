@@ -67,6 +67,10 @@ TABLE *table_new_generic(int fields, int index, int *types, char **headers) {
 	//user fields + row field
 	t->fields = fields + 1;
 
+	//if index is out of bounds the default index will be the row_no collumn
+	if (t->index <= 0 || t->index > fields)
+		index = 0;
+
 	t->index = index;
 
 	//insert the row_no collumn
