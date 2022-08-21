@@ -1,8 +1,8 @@
 /* The reason I'm creating this data abstraction is because GRelation (glib
- * API was deprecated and limited to only two atributes).
+ * API was deprecated and limited to only two attributes).
  * This got me thinking and decided to apply a dataset (glib API) instead. The
  * problem? You can't add indexing to it and you couldn't sort the elements by
- * collumn. And we needed it for a school assignment. So I came up with the
+ * column. And we needed it for a school assignment. So I came up with the
  * boring job to create a copy of the famous SQL Table and add the ability to
  * perform indexing to make it somewhat more efficient.
  */
@@ -21,7 +21,7 @@
 
 /**
  * @title: Table
- * @short_description: data strucure for data storing and querying.
+ * @short_description: data structure for data storing and querying.
  * 	otimizations are also implemented
  *
  * This tables are supposed to emulate the typical database tables. You can
@@ -45,8 +45,6 @@
  *
  * Don't forget to destroy the table after using it. Otherwise you'll
  * have a lot of information not freed.
- *
- * Still to add: destroy function
  */
 
 /**
@@ -56,7 +54,7 @@
  * @types: Array of types
  * @headers: Array of strings for the headers name
  *
- * Creates a new TABLE and prepares all the resources needed for it management
+ * Creates a new TABLE and prepares all the resources needed for its management
  *
  * Returns: A pointer to the table
  */
@@ -96,8 +94,42 @@ TABLE *table_new_generic(int fields, int index, int *types, char **headers) {
 
 
 /**
+ * table_new:
+ * @fields: number of fields of the desired table
+ * @index: number of the collumn to be the primary index (-1 if there isn't)
+ * @fmt: the desired format of the various collumns
+ *     Example: the format "s ld lf f" would mean that the 1st collumn is a string,
+ *     2nd collumn is a long integer, 3rd collumn is a double and the 4th collumn
+ *     is a float.
+ * @...: the name of the collumns
+ *
+ * Creates a new TABLE and prepares all the resources needed for its management.
+ * This is done by parsing the arguments and calling table_new_generic
+ *
+ * Returns: A pointer to the table
+*/
+TABLE *table_new(int fields, int index, const char *fmt, ...) {
+	TABLE *t;
+	va_list ap;
+	va_start(ap, fmt);
+	int i;
+	int types[fields];
+	char *headers[fields];
+
+	for (i = 0; i < fields; i++) {
+		headers[i] = va_arg(ap, char *);
+		fmt_generic_type(fields, types, fmt);
+	}
+	va_end(ap);
+	t = table_new_generic(fields, index, types, headers);
+
+	return t;
+}
+
+
+/**
  * table_destroy:
- * @table: table to be destroied
+ * @table: table to be destroyed
  *
  * Deallocs every alloced memory in the table and destroys every data structure used
  *

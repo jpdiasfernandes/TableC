@@ -19,6 +19,7 @@ typedef struct table TABLE;
 
 
 TABLE *table_new_generic(int fields, int index, int *types, char **headers);
+TABLE *table_new(int fields, int index, const char *fmt, ...);
 void table_destroy(TABLE *table);
 
 #endif //_TABLE_

@@ -1,6 +1,7 @@
 #include "../includes/table.h"
 #include "../includes/table_p.h"
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * header_generic_insert:
@@ -93,4 +94,47 @@ gint key_generic_cmp(gconstpointer key1, gconstpointer key2, gpointer data) {
 			break;
 	}
 	return (gint)r;
+}
+
+/**
+ * @fmt_generic_type:
+ * @count: amount of types to read
+ * @fields: pointer to save the resulting fields
+ * @fmt: the string containing the foormat keywords to be parsed
+ *
+ * Parses the fmt string and stores the result of the type parsing in fields
+ * pointer
+ *
+ * Returns: amount of types parsed
+*/
+int fmt_generic_type(int count, int *fields, const char *fmt) {
+	//argument preparation for strtok_r
+	char **saveptr = &fmt;
+	char *str = fmt;
+	char *token;
+
+	//counter variable
+	int i = 0;
+
+	while ((token = strtok_r(str, " ", saveptr)) && i < count) {
+		int type;
+
+		if (strncmp(token, "s", 1) == 0)
+			type = TYPE_STRING;
+		else if (strncmp(token, "d", 1) == 0)
+			type = TYPE_INT;
+		else if (strncmp(token, "c", 1) == 0)
+			type = TYPE_CHAR;
+		else if (strncmp(token, "f", 1) == 0)
+			type = TYPE_FLOAT;
+		else if (strncmp(token, "lf", 1) == 0)
+			type = TYPE_DOUBLE;
+		else if (strncmp(token, "ld", 1) == 0)
+			type = TYPE_LONG;
+		else type = TYPE_DEFAULT;
+
+		fields[i++] = type;
+	}
+
+	return i;
 }
