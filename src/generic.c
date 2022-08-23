@@ -109,8 +109,9 @@ gint key_generic_cmp(gconstpointer key1, gconstpointer key2, gpointer data) {
 */
 int fmt_generic_type(int count, int *fields, const char *fmt) {
 	//argument preparation for strtok_r
-	char **saveptr = &fmt;
-	char *str = fmt;
+	char *str = strdup(fmt);
+	char *init_ptr = str;
+	char **saveptr = &str;
 	char *token;
 
 	//counter variable
@@ -136,5 +137,6 @@ int fmt_generic_type(int count, int *fields, const char *fmt) {
 		fields[i++] = type;
 	}
 
+	free(init_ptr);
 	return i;
 }
